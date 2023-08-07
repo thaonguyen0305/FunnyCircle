@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <canvas id="myCanvas" width="1368px" height="768px" style="border:1px solid #d3d3d3;"></canvas>
+    <script>
+        class Circle {
+    constructor(x, y, radius) {
+        this.x = x;
+        this.y = y;
+        this.radius = radius;
+        this.speedX = Math.random() * 2 - 1; // Tốc độ di chuyển theo trục X
+        this.speedY = Math.random() * 2 - 1; // Tốc độ di chuyển theo trục Y
+    }
+}
+
+function getRandomHex() {
+    return Math.floor(Math.random() * 255);
+}
+
+function getRandomColor() {
+    let red = getRandomHex();
+    let green = getRandomHex();
+    let blue = getRandomHex();
+    return `rgb(${red},${blue},${green})`;
+}
+
+function createCircle() {
+    let ctx = document.getElementById("myCanvas").getContext("2d");
+    let radius = Math.floor(Math.random() * 80);
+    let color = getRandomColor();
+    let x = Math.random() * window.innerWidth;
+    let y = Math.random() * window.innerHeight;
+    let circle = new Circle(x, y, radius);
+
+    ctx.beginPath();
+    ctx.arc(circle.x, circle.y, circle.radius, 0, 2 * Math.PI);
+    ctx.fillStyle = color;
+    ctx.fill();
+
+    return circle;
+}
+
+function createMultipleCircle() {
+    let circles = [];
+
+    for (let i = 0; i < 30; i++) {
+        let circle = createCircle();
+        circles.push(circle);
+    }
+
+    return circles;
+}
+
+function moveCircles(circles) {
+    let ctx = document.getElementById("myCanvas").getContext("2d");
+    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+    for (let i = 0; i < circles.length; i++) {
+        let circle = circles[i];
+
+        // Cập nhật vị trí mới của hình tròn
+        circle.x += circle.speedX;
+        circle.y += circle.speedY;
+        // Kiểm tra va chạm với cạnh của cửa sổ
+        if (circle.x + circle.radius > window.innerWidth || circle.x - circle.radius < 0) {
+            circle.speedX = -circle.speedX;
+        }
+        if (circle.y + circle.radius > window.innerHeight || circle.y - circle.radius < 0) {
+            circle.speedY = -circle.speedY;
+        }
+
+        // Vẽ lại hình tròn ở vị trí mới
+        ctx.beginPath();
+        ctx.arc(circle.x, circle.y, circle.radius, 0, 2 * Math.PI);
+        ctx.fillStyle = circle.color;
+        ctx.fill();
+    }
+
+    requestAnimationFrame(() => moveCircles(circles)); // Gọi lại hàm để di chuyển liên tục
+}
+
+let circles = createMultipleCircle();
+moveCircles(circles);
+
+
+
+    </script>
+</body>
+
+</html>
